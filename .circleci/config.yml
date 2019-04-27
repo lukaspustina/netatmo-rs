@@ -4,8 +4,8 @@ orbs:
   heroku: circleci/heroku@0.0.6
 
 commands:
-  rust_build:
-    description: "Run cargo build workflow with specific Rust version"
+  rust_check:
+    description: "Run cargo check workflow with specific Rust version"
     parameters:
       rust_channel:
         type: string
@@ -22,10 +22,39 @@ commands:
             - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
       - run:
           name: Build all targets
-          command: cargo build --all --all-targets
+          command: cargo check --all --all-targets
+      - save_cache:
+          paths:
+            - /usr/local/cargo/registry
+            - target/debug/.fingerprint
+            - target/debug/build
+            - target/debug/deps
+          key: v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - target
+  rust_build:
+    description: "Run cargo build workflow with specific Rust version"
+    parameters:
+      rust_channel:
+        type: string
+    steps:
+      - checkout
       - run:
-          name: Run all tests
-          command: cargo test --all
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Calculate dependencies
+          command: cargo generate-lockfile
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
+      - attach_workspace:
+          at: /root/project
+      - run:
+          name: Build all targets
+          command: cargo build --all --all-targets
       - save_cache:
           paths:
             - /usr/local/cargo/registry
@@ -68,6 +97,24 @@ commands:
 
 
 jobs:
+  check-1-34:
+    docker:
+      - image: rust:1.34
+    steps:
+      - rust_check:
+          rust_channel: 1-34
+  check-stable:
+    docker:
+      - image: rust:latest
+    steps:
+      - rust_check:
+          rust_channel: stable
+  check-nightly:
+    docker:
+      - image: rustlang/rust:nightly
+    steps:
+      - rust_check:
+          rust_channel: nightly
   build-1-34:
     docker:
       - image: rust:1.34
@@ -106,22 +153,35 @@ jobs:
           rust_channel: nightly
 
 
+check-build-test: &check-build-test
+  - check-1-34
+  - build-1-34:
+      requires:
+        - check-1-34
+  - test-1-34:
+      requires:
+        - build-1-34
+  - check-stable
+  - build-stable:
+      requires:
+        - check-stable
+  - test-stable:
+      requires:
+        - build-stable
+  - check-nightly
+  - build-nightly:
+      requires:
+        - check-nightly
+  - test-nightly:
+      requires:
+        - build-nightly
+
+
 workflows:
   version: 2
   build:
     jobs:
-      - build-1-34
-      - test-1-34:
-          requires:
-            - build-1-34
-      - build-stable
-      - test-stable:
-          requires:
-            - build-stable
-      - build-nightly
-      - test-nightly:
-          requires:
-            - build-nightly
+      *check-build-test
   cron:
     triggers:
       - schedule:
@@ -131,16 +191,5 @@ workflows:
               only:
                 - master
     jobs:
-      - build-1-34
-      - test-1-34:
-          requires:
-            - build-1-34
-      - build-stable
-      - test-stable:
-          requires:
-            - build-stable
-      - build-nightly
-      - test-nightly:
-          requires:
-            - build-nightly
+      *check-build-test
 
