@@ -26,7 +26,7 @@ commands:
             - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
       - run:
           name: Cargo << parameters.command >> all targets with Rust version << parameters.rust_channel >>
-          command: cargo << parameters.command >> --all --all-targets --all-features
+          command: cargo << parameters.command >> --all --all-targets --all-features --examples
       - save_cache:
           paths:
             - /usr/local/cargo/registry
