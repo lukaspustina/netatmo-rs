@@ -4,6 +4,34 @@ orbs:
   heroku: circleci/heroku@0.0.6
 
 commands:
+  cargo:
+    description: "Run cargo command with specific Rust version"
+    parameters:
+      command:
+        type: string
+      rust_channel:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Calculate dependencies
+          command: cargo generate-lockfile
+      - restore_cache:
+          keys:
+            - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
+      - run:
+          name: << parameters.command >> all targets
+          command: cargo << parameters.command >> --all --all-targets
+      - save_cache:
+          paths:
+            - /usr/local/cargo/registry
+            - target/debug/.fingerprint
+            - target/debug/build
+            - target/debug/deps
+          key: v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
   rust_check:
     description: "Run cargo check workflow with specific Rust version"
     parameters:
@@ -30,10 +58,6 @@ commands:
             - target/debug/build
             - target/debug/deps
           key: v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
-      - persist_to_workspace:
-          root: /root/project
-          paths:
-            - target
   rust_build:
     description: "Run cargo build workflow with specific Rust version"
     parameters:
@@ -50,8 +74,6 @@ commands:
       - restore_cache:
           keys:
             - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
-      - attach_workspace:
-          at: /root/project
       - run:
           name: Build all targets
           command: cargo build --all --all-targets
@@ -62,10 +84,6 @@ commands:
             - target/debug/build
             - target/debug/deps
           key: v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
-      - persist_to_workspace:
-          root: /root/project
-          paths:
-            - target
   rust_test:
     description: "Run cargo test workflow with specific Rust version"
     parameters:
@@ -82,8 +100,6 @@ commands:
       - restore_cache:
           keys:
             - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
-      - attach_workspace:
-          at: /root/project
       - run:
           name: Run all tests
           command: cargo test --all
@@ -101,7 +117,8 @@ jobs:
     docker:
       - image: rust:1.34
     steps:
-      - rust_check:
+      - cargo:
+          command: check
           rust_channel: 1-34
   check-stable:
     docker:
@@ -119,7 +136,8 @@ jobs:
     docker:
       - image: rust:1.34
     steps:
-      - rust_build:
+      - cargo:
+          command: build
           rust_channel: 1-34
   build-stable:
     docker:
@@ -137,7 +155,8 @@ jobs:
     docker:
       - image: rust:1.34
     steps:
-      - rust_test:
+      - cargo:
+          command: test
           rust_channel: 1-34
   test-stable:
     docker:
