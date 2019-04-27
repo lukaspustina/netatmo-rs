@@ -34,7 +34,7 @@ commands:
             - target/debug/deps
           key: v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
       - persist_to_workspace:
-          root: workspace
+          root: /root/project
           paths:
             - target
   rust_test:
@@ -54,7 +54,7 @@ commands:
           keys:
             - v1-cargo-cache-<< parameters.rust_channel >>-{{ arch }}-{{ checksum "Cargo.lock" }}
       - attach_workspace:
-          at: workspace
+          at: /root/project
       - run:
           name: Run all tests
           command: cargo test --all
