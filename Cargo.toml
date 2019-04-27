@@ -8,7 +8,7 @@ documentation = "http://lukaspustina.github.io/netatmo-rs"
 readme = "README.md"
 license = "MIT"
 keywords = ["netatmo", "api"]
-categories = ["api"]
+categories = ["api-bindings"]
 include = [
   "README.md",
   "LICENSE",
