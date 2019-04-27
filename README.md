@@ -1,8 +1,8 @@
 # netatmo-rs
 
-`netatmo-rs` is a simple [Rust](https://rust-lang.org) library to talk to [Netatmo's API](https://dev.netatmo.com/resources/technical/introduction).
-
 [![Linux Build Status](https://circleci.com/gh/lukaspustina/netatmo-rs.svg?style=shield)](https://circleci.com/gh/lukaspustina/netatmo-rs) [![codecov](https://codecov.io/gh/lukaspustina/netatmo-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/lukaspustina/netatmo-rs) [![GitHub release](https://img.shields.io/github/release/lukaspustina/netatmo-rs.svg)](https://github.com/lukaspustina/netatmo-rs/releases) [![](https://img.shields.io/crates/v/netatmo-rs.svg)](https://crates.io/crates/netatmo-rs) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg?label=License)](./LICENSE)
+
+`netatmo-rs` is a simple [Rust](https://rust-lang.org) library to talk to [Netatmo's API](https://dev.netatmo.com/resources/technical/introduction).
 
 ## Changelog
 
