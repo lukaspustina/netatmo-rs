@@ -26,3 +26,10 @@ path = "src/main.rs"
 required-features = ["cli"]
 
 [dependencies]
+reqwest = { version = "^0.9", features = ["rustls-tls"] }
+serde = { version = "^1.0", features = ["derive"] }
+serde_json = "^1.0"
+
+[dev-dependencies]
+spectral = "0.6.0"
+
