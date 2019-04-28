@@ -29,3 +29,8 @@ Rheinwerkallee 3
 Germany
 ```
 
+## Todos
+
+1. ClientBuilder, reuse reqwest client etc.
+1. Semantic transformation of results -> use enums, timezone etc instead of Strings and int values.
+
