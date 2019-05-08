@@ -16,7 +16,15 @@ Please see the [CHANGELOG](CHANGELOG.md) for a release history.
 1. Create a new App for your personal Netatmo account at the [Create an App](https://dev.netatmo.com/myaccount/createanapp) page.
 2. Save client id and client secret.
 
- 
+
+## Development
+
+### Run Examples
+
+```bash
+NETATMO_CLIENT_ID=xxxx NETATMO_CLIENT_SECRET=xxxx NETATMO_USERNAME=xxxx NETATMO_PASSWORD=xxxx NETATMO_DEVICE_ID=xxxx cargo run --example get_station_data
+```
+
 ## Postcardware
 
 You're free to use `netatmo-rs`. If you find it useful, I would highly appreciate you sending me a postcard from your hometown mentioning how you use `netatmo-rs`. My work address is
