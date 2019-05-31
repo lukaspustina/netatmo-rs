@@ -1,7 +1,6 @@
 use crate::client::UnauthenticatedClient;
-use crate::errors::{ErrorKind, Result};
+use crate::errors::Result;
 
-use failure::Fail;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
@@ -91,14 +90,5 @@ pub(crate) fn get_token(
     params.insert("grant_type", "password");
     params.insert("scope", &scopes_str);
 
-    let mut res = unauthenticated_client.http
-        .post("https://api.netatmo.com/oauth2/token")
-        .form(&params)
-        .send()
-        .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?;
-
-    let body = res
-        .text()
-        .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    unauthenticated_client.call("https://api.netatmo.com/oauth2/token", &params)
 }

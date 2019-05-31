@@ -1,11 +1,7 @@
 use crate::client::AuthenticatedClient;
-use crate::client::authenticate::Token;
-use crate::errors::{ErrorKind, Result};
+use crate::errors::Result;
 
-use failure::Fail;
-use reqwest;
 use serde::{Deserialize, Serialize};
-use serde_json;
 use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,20 +109,11 @@ pub struct Administrative {
 }
 
 pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
-    let mut params: HashMap<&str, &str> = HashMap::new();
+    let mut params: HashMap<&str, &str> = HashMap::default();
     params.insert("access_token", &client.token.access_token);
     params.insert("device_id", device_id);
 
-    let mut res = client.http
-        .post("https://api.netatmo.com/api/getstationsdata")
-        .form(&params)
-        .send()
-        .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?;
-
-    let body = res
-        .text()
-        .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    client.call("https://api.netatmo.com/api/getstationsdata", &params)
 }
 
 #[cfg(test)]
