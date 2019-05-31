@@ -1,6 +1,5 @@
-use crate::client::DeviceId;
 use crate::client::authenticate::Token;
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::{ErrorKind, Result};
 
 use failure::Fail;
 use reqwest;
@@ -112,7 +111,7 @@ pub struct Administrative {
     windunit: u64,
 }
 
-pub fn get_station_data(token: &Token, device_id: &DeviceId) -> Result<StationData> {
+pub(crate) fn get_station_data(token: &Token, device_id: &str) -> Result<StationData> {
     let mut params: HashMap<&str, &str> = HashMap::new();
     params.insert("access_token", &token.access_token);
     params.insert("device_id", device_id);

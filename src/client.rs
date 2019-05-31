@@ -8,10 +8,8 @@ pub use crate::errors::{Error, ErrorKind, Result};
 use failure::Fail;
 
 pub trait Netatmo {
-    fn get_station_data(&self, device_id: &DeviceId) -> Result<StationData>;
+    fn get_station_data(&self, device_id: &str) -> Result<StationData>;
 }
-
-type DeviceId = String;
 
 #[derive(Debug)]
 pub struct ClientCredentials<'a> {
@@ -22,6 +20,7 @@ pub struct ClientCredentials<'a> {
 pub struct NetatmoClient {}
 
 impl<'a> NetatmoClient {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(client_credentials: &'a ClientCredentials) -> UnauthenticatedClient<'a> {
         UnauthenticatedClient {
             client_credentials,
@@ -60,7 +59,7 @@ impl AuthenticatedClient {
 }
 
 impl Netatmo for AuthenticatedClient {
-    fn get_station_data(&self, device_id: &DeviceId) -> Result<StationData> {
+    fn get_station_data(&self, device_id: &str) -> Result<StationData> {
         get_station_data::get_station_data(&self.token, device_id)
             .map_err(|e| e.context(ErrorKind::ApiCallFailed("get_station_data".to_string())).into())
     }

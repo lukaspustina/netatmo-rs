@@ -1,10 +1,10 @@
 use crate::client::UnauthenticatedClient;
 use crate::errors::{ErrorKind, Result};
 
+use failure::Fail;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::collections::HashMap;
-use failure::Fail;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
@@ -17,7 +17,7 @@ pub struct Token {
 
 impl<'a> From<&'a UnauthenticatedClient<'a>> for HashMap<&str, &'a str> {
     fn from(uc: &'a UnauthenticatedClient) -> HashMap<&'static str, &'a str> {
-        let mut m = HashMap::new();
+        let mut m = HashMap::default();
         m.insert("client_id", uc.client_credentials.client_id);
         m.insert("client_secret", uc.client_credentials.client_secret);
 
@@ -72,8 +72,8 @@ impl Scope {
     }
 }
 
-pub fn get_token(unauthenticated_client: &UnauthenticatedClient, username: &str, password: &str, scopes: &[Scope]) -> Result<Token> {
-    let scopes_str: String = scopes.into_iter().map(|s| s.to_scope_str()).collect::<Vec<_>>().as_slice().join(".");
+pub(crate) fn get_token(unauthenticated_client: &UnauthenticatedClient, username: &str, password: &str, scopes: &[Scope]) -> Result<Token> {
+    let scopes_str: String = scopes.iter().map(Scope::to_scope_str).collect::<Vec<_>>().as_slice().join(".");
 
     let mut params: HashMap<_,_> = unauthenticated_client.into();
     params.insert("username", username);
