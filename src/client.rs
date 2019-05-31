@@ -1,9 +1,11 @@
 pub mod authenticate;
 pub mod get_station_data;
+pub mod get_measure;
 
 pub use crate::errors::{Error, ErrorKind, Result};
 pub use authenticate::{Scope, Token};
 pub use get_station_data::StationData;
+pub use get_measure::{Measure, Parameters};
 
 use failure::Fail;
 use reqwest;
@@ -12,6 +14,7 @@ use std::collections::HashMap;
 
 pub trait Netatmo {
     fn get_station_data(&self, device_id: &str) -> Result<StationData>;
+    fn get_measure(&self, parameters: &get_measure::Parameters) -> Result<Measure>;
 }
 
 #[derive(Debug)]
@@ -99,9 +102,16 @@ fn api_call<T>(http: &reqwest::Client, url: &str, params: &HashMap<&str, &str>) 
 
 impl Netatmo for AuthenticatedClient {
     fn get_station_data(&self, device_id: &str) -> Result<StationData> {
-        get_station_data::get_station_data(&self, device_id).map_err(|e| {
-            e.context(ErrorKind::ApiCallFailed("get_station_data".to_string()))
-                .into()
-        })
+        get_station_data::get_station_data(&self, device_id)
+            .map_err(|e| {
+                e.context(ErrorKind::ApiCallFailed("get_station_data".to_string())).into()
+            })
+    }
+
+    fn get_measure(&self, parameters: &Parameters) -> Result<Measure> {
+        get_measure::get_measure(&self, parameters)
+            .map_err(|e| {
+                e.context(ErrorKind::ApiCallFailed("get_measure".to_string())).into()
+            })
     }
 }
