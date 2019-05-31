@@ -1,3 +1,4 @@
+use crate::client::AuthenticatedClient;
 use crate::client::authenticate::Token;
 use crate::errors::{ErrorKind, Result};
 
@@ -111,13 +112,12 @@ pub struct Administrative {
     windunit: u64,
 }
 
-pub(crate) fn get_station_data(token: &Token, device_id: &str) -> Result<StationData> {
+pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
     let mut params: HashMap<&str, &str> = HashMap::new();
-    params.insert("access_token", &token.access_token);
+    params.insert("access_token", &client.token.access_token);
     params.insert("device_id", device_id);
 
-    let client = reqwest::Client::new();
-    let mut res = client
+    let mut res = client.http
         .post("https://api.netatmo.com/api/getstationsdata")
         .form(&params)
         .send()

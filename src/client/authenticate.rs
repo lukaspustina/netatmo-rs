@@ -91,8 +91,7 @@ pub(crate) fn get_token(
     params.insert("grant_type", "password");
     params.insert("scope", &scopes_str);
 
-    let client = reqwest::Client::new();
-    let mut res = client
+    let mut res = unauthenticated_client.http
         .post("https://api.netatmo.com/oauth2/token")
         .form(&params)
         .send()
