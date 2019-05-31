@@ -217,6 +217,16 @@ pub fn get_station_data(token: &Token, device_id: &str) -> StationData {
     station_data
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Measure {
+
+}
+
+pub fn get_measure(token: &Token, device_id: &str) -> Measure {
+    //cf. https://dev.netatmo.com/resources/technical/reference/common/getmeasure
+    unimplemented!("NYI")
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
