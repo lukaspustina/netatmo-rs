@@ -3,7 +3,7 @@ use crate::errors::{ErrorKind, Result};
 
 use failure::Fail;
 use reqwest;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::collections::HashMap;
 
@@ -117,15 +117,16 @@ pub(crate) fn get_station_data(token: &Token, device_id: &str) -> Result<Station
     params.insert("device_id", device_id);
 
     let client = reqwest::Client::new();
-    let mut res = client.post("https://api.netatmo.com/api/getstationsdata")
+    let mut res = client
+        .post("https://api.netatmo.com/api/getstationsdata")
         .form(&params)
         .send()
         .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?;
 
-    let body = res.text()
+    let body = res
+        .text()
         .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str(&body)
-        .map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    serde_json::from_str(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
 
 #[cfg(test)]

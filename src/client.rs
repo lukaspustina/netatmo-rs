@@ -1,9 +1,9 @@
 pub mod authenticate;
 pub mod get_station_data;
 
+pub use crate::errors::{Error, ErrorKind, Result};
 pub use authenticate::{Scope, Token};
 pub use get_station_data::StationData;
-pub use crate::errors::{Error, ErrorKind, Result};
 
 use failure::Fail;
 
@@ -22,26 +22,26 @@ pub struct NetatmoClient {}
 impl<'a> NetatmoClient {
     #[allow(clippy::new_ret_no_self)]
     pub fn new(client_credentials: &'a ClientCredentials) -> UnauthenticatedClient<'a> {
-        UnauthenticatedClient {
-            client_credentials,
-        }
+        UnauthenticatedClient { client_credentials }
     }
 
     pub fn with_token(token: Token) -> AuthenticatedClient {
-        AuthenticatedClient {
-            token
-        }
-
+        AuthenticatedClient { token }
     }
 }
 
 #[derive(Debug)]
 pub struct UnauthenticatedClient<'a> {
-    client_credentials: &'a ClientCredentials<'a>
+    client_credentials: &'a ClientCredentials<'a>,
 }
 
 impl<'a> UnauthenticatedClient<'a> {
-    pub fn authenticate(&self, username: &'a str, password: &'a str, scopes: &[Scope]) -> Result<AuthenticatedClient> {
+    pub fn authenticate(
+        &self,
+        username: &'a str,
+        password: &'a str,
+        scopes: &[Scope],
+    ) -> Result<AuthenticatedClient> {
         authenticate::get_token(self, username, password, scopes)
             .map(|token| AuthenticatedClient { token })
             .map_err(|e| e.context(ErrorKind::AuthenticationFailed).into())
@@ -49,7 +49,7 @@ impl<'a> UnauthenticatedClient<'a> {
 }
 
 pub struct AuthenticatedClient {
-    token: Token
+    token: Token,
 }
 
 impl AuthenticatedClient {
@@ -60,7 +60,9 @@ impl AuthenticatedClient {
 
 impl Netatmo for AuthenticatedClient {
     fn get_station_data(&self, device_id: &str) -> Result<StationData> {
-        get_station_data::get_station_data(&self.token, device_id)
-            .map_err(|e| e.context(ErrorKind::ApiCallFailed("get_station_data".to_string())).into())
+        get_station_data::get_station_data(&self.token, device_id).map_err(|e| {
+            e.context(ErrorKind::ApiCallFailed("get_station_data".to_string()))
+                .into()
+        })
     }
 }

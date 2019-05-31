@@ -3,8 +3,8 @@ use crate::errors::{ErrorKind, Result};
 
 use failure::Fail;
 use serde::{Deserialize, Serialize};
-use std::fmt;
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
@@ -72,23 +72,34 @@ impl Scope {
     }
 }
 
-pub(crate) fn get_token(unauthenticated_client: &UnauthenticatedClient, username: &str, password: &str, scopes: &[Scope]) -> Result<Token> {
-    let scopes_str: String = scopes.iter().map(Scope::to_scope_str).collect::<Vec<_>>().as_slice().join(".");
+pub(crate) fn get_token(
+    unauthenticated_client: &UnauthenticatedClient,
+    username: &str,
+    password: &str,
+    scopes: &[Scope],
+) -> Result<Token> {
+    let scopes_str: String = scopes
+        .iter()
+        .map(Scope::to_scope_str)
+        .collect::<Vec<_>>()
+        .as_slice()
+        .join(".");
 
-    let mut params: HashMap<_,_> = unauthenticated_client.into();
+    let mut params: HashMap<_, _> = unauthenticated_client.into();
     params.insert("username", username);
     params.insert("password", password);
     params.insert("grant_type", "password");
     params.insert("scope", &scopes_str);
 
     let client = reqwest::Client::new();
-    let mut res = client.post("https://api.netatmo.com/oauth2/token")
+    let mut res = client
+        .post("https://api.netatmo.com/oauth2/token")
         .form(&params)
         .send()
         .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?;
 
-    let body = res.text()
+    let body = res
+        .text()
         .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str(&body)
-        .map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    serde_json::from_str(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
