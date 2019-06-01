@@ -1,6 +1,6 @@
 [package]
 name = "netatmo-rs"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Lukas Pustina <lukas@pustina.net>"]
 description = "Simple library to talk to Netatmo's API"
 repository = "https://github.com/lukaspustina/netatmo-rs.git"
