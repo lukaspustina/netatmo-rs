@@ -2,10 +2,10 @@ pub mod authenticate;
 pub mod get_station_data;
 pub mod get_measure;
 
-pub use crate::errors::{Error, ErrorKind, Result};
-pub use authenticate::{Scope, Token};
-pub use get_station_data::StationData;
-pub use get_measure::{Measure, Parameters};
+use crate::errors::{ErrorKind, Result};
+use authenticate::{Scope, Token};
+use get_station_data::StationData;
+use get_measure::{Measure, Parameters};
 
 use failure::Fail;
 use reqwest;

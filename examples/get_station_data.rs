@@ -1,4 +1,4 @@
-use netatmo_rs::client::{ClientCredentials, Netatmo, NetatmoClient, Scope};
+use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
 use std::env;
 
 fn main() {

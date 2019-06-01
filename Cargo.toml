@@ -17,14 +17,6 @@ include = [
 ]
 edition = "2018"
 
-[features]
-cli = []
-
-[[bin]]
-name = "netatmo"
-path = "src/main.rs"
-required-features = ["cli"]
-
 [dependencies]
 failure = "0.1"
 reqwest = { version = "^0.9", features = ["rustls-tls"] }
