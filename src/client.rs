@@ -79,8 +79,9 @@ impl AuthenticatedClient {
         &self.token
     }
 
-    pub(crate) fn call<T>(&self, url: &str, params: &HashMap<&str, &str>) -> Result<T>
+    pub(crate) fn call<'a, T>(&'a self, url: &str, params: &mut HashMap<&str, &'a str>) -> Result<T>
         where T: DeserializeOwned {
+        params.insert("access_token", &self.token.access_token);
         api_call(&self.http, url, params)
     }
 }
@@ -88,6 +89,7 @@ impl AuthenticatedClient {
 fn api_call<T>(http: &reqwest::Client, url: &str, params: &HashMap<&str, &str>) -> Result<T>
     where
         T: DeserializeOwned {
+
     let mut res = http
         .post(url)
         .form(&params)

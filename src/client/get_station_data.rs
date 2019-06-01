@@ -110,10 +110,9 @@ pub struct Administrative {
 
 pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
     let mut params: HashMap<&str, &str> = HashMap::default();
-    params.insert("access_token", &client.token.access_token);
     params.insert("device_id", device_id);
 
-    client.call("https://api.netatmo.com/api/getstationsdata", &params)
+    client.call("https://api.netatmo.com/api/getstationsdata", &mut params)
 }
 
 #[cfg(test)]

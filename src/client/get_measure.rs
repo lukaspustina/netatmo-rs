@@ -157,15 +157,12 @@ pub struct Measure {
 
 //cf. https://dev.netatmo.com/resources/technical/reference/common/getmeasure
 pub fn get_measure(client: &AuthenticatedClient, parameters: &Parameters) -> Result<Measure> {
-    let mut params: HashMap<&str, String> = parameters.into();
-    params.insert("access_token", client.token.access_token.to_string());
-
-    let params= params
-        .iter()
+    let params: HashMap<&str, String> = parameters.into();
+    let mut params = params.iter()
         .map(|(k,v)| (*k,v.as_ref()))
         .collect();
 
-    client.call("https://api.netatmo.com/api/getmeasure", &params)
+    client.call("https://api.netatmo.com/api/getmeasure", &mut params)
 }
 
 fn de_body_values<'de, D>(deserializer: D) -> ::std::result::Result<HashMap<usize, Vec<Option<f64>>>, D::Error>
