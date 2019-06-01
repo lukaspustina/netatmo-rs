@@ -120,8 +120,6 @@ mod test {
     use super::*;
     use spectral::prelude::*;
 
-    use std::collections::HashMap;
-
     mod get_station_data {
         use super::*;
 
