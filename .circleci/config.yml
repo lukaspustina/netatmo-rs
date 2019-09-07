@@ -61,14 +61,6 @@ aliases:
     - test-stable:
         requires:
           - build-stable
-    - check-nightly
-    - build-nightly:
-        requires:
-          - check-nightly
-    - test-nightly:
-        requires:
-          - build-nightly
-
 
 jobs:
   check-1-34:
