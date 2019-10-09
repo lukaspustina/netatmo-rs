@@ -1,0 +1,177 @@
+on:
+  push: 
+  pull_request:
+  schedule:
+    - cron:  '01 01 * * *'
+
+name: CI
+
+jobs:
+  check:
+    name: Check
+    runs-on: ${{ matrix.os.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # - name: ubuntu-latest
+          #  allow_fail: true
+          - name: macOS-latest
+            allow_fail: false
+        rust:
+          - name: 1.36.0
+            allow_fail: false
+          - name: stable
+            allow_fail: false
+          - name: beta
+            allow_fail: true
+          - name: nightly
+            allow_fail: true
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust.name }}
+          override: true
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          toolchain: ${{ matrix.rust.name }}
+          command: check
+          continue-on-error: ${{ matrix.os.allow_fail || matrix.rust.allow_fail }}
+
+  audit:
+    name: Cargo Audit
+    runs-on: ${{ matrix.os.name }}
+    strategy:
+      matrix:
+        os:
+          # - name: ubuntu-latest
+          - name: macOS-latest
+        rust:
+          - name: stable
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust.name }}
+          override: true
+
+      - name: Install cargo audit
+        run: cargo install cargo-audit
+
+      - name: Run cargo audit
+        uses: actions-rs/cargo@v1
+        with:
+          command: audit
+          args: --deny-warnings
+
+  clippy:
+    name: Clippy
+    runs-on: ${{ matrix.os.name }}
+    strategy:
+      matrix:
+        os:
+          # - name: ubuntu-latest
+          - name: macOS-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - id: component
+        name: Search for latest nightly clippy
+        uses: actions-rs/components-nightly@v1
+        with:
+          component: clippy
+
+      - name: Install nightly toolchain with clippy available
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: ${{ steps.component.outputs.toolchain }}
+            override: true
+
+      - name: Install clippy
+        run: rustup component add clippy
+
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          # For lints see /.clippy.args
+          args: -- -D warnings -A renamed_and_removed_lints -A clippy::match_bool -A clippy::get_unwrap -A clippy::new_without_default -A clippy::identity-conversion -A clippy::needless_lifetimes
+
+  rustfmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - id: component
+        name: Search for latest nightly rustfmt
+        uses: actions-rs/components-nightly@v1
+        with:
+          target: x86_64-unknown-linux-gnu
+          component: rustfmt
+
+      - name: Install nightly toolchain with rustfmt available
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: ${{ steps.component.outputs.toolchain }}
+            override: true
+
+      - name: Install rustfmt
+        run: rustup component add rustfmt
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  test:
+    name: Test
+    runs-on: ${{ matrix.os.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # - name: ubuntu-latest
+          #  allow_fail: true
+          - name: macOS-latest
+            allow_fail: false
+        rust:
+          - name: 1.36.0
+            allow_fail: false
+          - name: stable
+            allow_fail: false
+          - name: beta
+            allow_fail: true
+          - name: nightly
+            allow_fail: true
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust.name }}
+          override: true
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          toolchain: ${{ matrix.rust.name }}
+          command: test 
+          args: --release
+          continue-on-error: ${{ matrix.os.allow_fail || matrix.rust.allow_fail }}
+
