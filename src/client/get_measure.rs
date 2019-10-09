@@ -120,6 +120,7 @@ impl fmt::Display for Type {
     }
 }
 
+#[allow(clippy::implicit_hasher)]
 impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
     fn from(p: &'a Parameters) -> HashMap<&'static str, String> {
         let types = p

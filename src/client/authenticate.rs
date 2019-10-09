@@ -14,6 +14,7 @@ pub struct Token {
     pub expire_in: u64,
 }
 
+#[allow(clippy::implicit_hasher)]
 impl<'a> From<&'a UnauthenticatedClient<'a>> for HashMap<&str, &'a str> {
     fn from(uc: &'a UnauthenticatedClient) -> HashMap<&'static str, &'a str> {
         let mut m = HashMap::default();
