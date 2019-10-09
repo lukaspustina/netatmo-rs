@@ -1,7 +1,7 @@
 use crate::client::AuthenticatedClient;
 use crate::errors::Result;
 
-use serde::{Deserialize, Serialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
@@ -31,7 +31,12 @@ impl<'a> Parameters<'a> {
         }
     }
 
-    pub fn with_module_id(device_id: &'a str, module_id: &'a str, scale: Scale, types: &'a [Type]) -> Self {
+    pub fn with_module_id(
+        device_id: &'a str,
+        module_id: &'a str,
+        scale: Scale,
+        types: &'a [Type],
+    ) -> Self {
         Parameters {
             device_id,
             module_id,
@@ -117,7 +122,8 @@ impl fmt::Display for Type {
 
 impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
     fn from(p: &'a Parameters) -> HashMap<&'static str, String> {
-        let types = p.types
+        let types = p
+            .types
             .iter()
             .map(|x| x.to_string())
             .collect::<Vec<_>>()
@@ -146,7 +152,6 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
     }
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Measure {
     status: String,
@@ -158,22 +163,21 @@ pub struct Measure {
 //cf. https://dev.netatmo.com/resources/technical/reference/common/getmeasure
 pub fn get_measure(client: &AuthenticatedClient, parameters: &Parameters) -> Result<Measure> {
     let params: HashMap<&str, String> = parameters.into();
-    let mut params = params.iter()
-        .map(|(k,v)| (*k,v.as_ref()))
-        .collect();
+    let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
 
     client.call("https://api.netatmo.com/api/getmeasure", &mut params)
 }
 
-fn de_body_values<'de, D>(deserializer: D) -> ::std::result::Result<HashMap<usize, Vec<Option<f64>>>, D::Error>
-    where
-        D: Deserializer<'de>,
+fn de_body_values<'de, D>(
+    deserializer: D,
+) -> ::std::result::Result<HashMap<usize, Vec<Option<f64>>>, D::Error>
+where
+    D: Deserializer<'de>,
 {
     let map = HashMap::<String, Vec<Option<f64>>>::deserialize(deserializer)?;
     let mut tuples = Vec::new();
     for (k, v) in map {
-        let key = usize::from_str(&k)
-            .map_err(serde::de::Error::custom)?;
+        let key = usize::from_str(&k).map_err(serde::de::Error::custom)?;
         tuples.push((key, v));
     }
     let res = tuples.into_iter().collect();

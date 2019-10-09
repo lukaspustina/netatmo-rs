@@ -1,11 +1,11 @@
 pub mod authenticate;
-pub mod get_station_data;
 pub mod get_measure;
+pub mod get_station_data;
 
 use crate::errors::{ErrorKind, Result};
 use authenticate::{Scope, Token};
-use get_station_data::StationData;
 use get_measure::{Measure, Parameters};
+use get_station_data::StationData;
 
 use failure::Fail;
 use reqwest;
@@ -64,7 +64,9 @@ impl<'a> UnauthenticatedClient<'a> {
     }
 
     pub(crate) fn call<T>(&self, url: &str, params: &HashMap<&str, &str>) -> Result<T>
-        where T: DeserializeOwned {
+    where
+        T: DeserializeOwned,
+    {
         api_call(&self.http, url, params)
     }
 }
@@ -80,16 +82,18 @@ impl AuthenticatedClient {
     }
 
     pub(crate) fn call<'a, T>(&'a self, url: &str, params: &mut HashMap<&str, &'a str>) -> Result<T>
-        where T: DeserializeOwned {
+    where
+        T: DeserializeOwned,
+    {
         params.insert("access_token", &self.token.access_token);
         api_call(&self.http, url, params)
     }
 }
 
 fn api_call<T>(http: &reqwest::Client, url: &str, params: &HashMap<&str, &str>) -> Result<T>
-    where
-        T: DeserializeOwned {
-
+where
+    T: DeserializeOwned,
+{
     let mut res = http
         .post(url)
         .form(&params)
@@ -99,21 +103,22 @@ fn api_call<T>(http: &reqwest::Client, url: &str, params: &HashMap<&str, &str>) 
     let body = res
         .text()
         .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str::<T>(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    serde_json::from_str::<T>(&body)
+        .map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
 
 impl Netatmo for AuthenticatedClient {
     fn get_station_data(&self, device_id: &str) -> Result<StationData> {
-        get_station_data::get_station_data(&self, device_id)
-            .map_err(|e| {
-                e.context(ErrorKind::ApiCallFailed("get_station_data".to_string())).into()
-            })
+        get_station_data::get_station_data(&self, device_id).map_err(|e| {
+            e.context(ErrorKind::ApiCallFailed("get_station_data".to_string()))
+                .into()
+        })
     }
 
     fn get_measure(&self, parameters: &Parameters) -> Result<Measure> {
-        get_measure::get_measure(&self, parameters)
-            .map_err(|e| {
-                e.context(ErrorKind::ApiCallFailed("get_measure".to_string())).into()
-            })
+        get_measure::get_measure(&self, parameters).map_err(|e| {
+            e.context(ErrorKind::ApiCallFailed("get_measure".to_string()))
+                .into()
+        })
     }
 }

@@ -108,7 +108,10 @@ pub struct Administrative {
     windunit: u64,
 }
 
-pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
+pub(crate) fn get_station_data(
+    client: &AuthenticatedClient,
+    device_id: &str,
+) -> Result<StationData> {
     let mut params: HashMap<&str, &str> = HashMap::default();
     params.insert("device_id", device_id);
 

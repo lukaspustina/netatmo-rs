@@ -1,5 +1,5 @@
-use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
 use netatmo_rs::get_measure::{Parameters, Scale, Type};
+use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
 use std::env;
 
 fn main() {
@@ -32,7 +32,7 @@ fn main() {
     let m_params = Parameters::new(
         &device_id,
         Scale::Max,
-        &[Type::Humidity, Type::Temperature, Type::CO2]
+        &[Type::Humidity, Type::Temperature, Type::CO2],
     );
 
     let station_data = NetatmoClient::new(&client_credentials)
