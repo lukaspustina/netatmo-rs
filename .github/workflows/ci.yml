@@ -167,7 +167,7 @@ jobs:
           toolchain: ${{ matrix.rust.name }}
           override: true
 
-      - name: Run cargo check
+      - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
           toolchain: ${{ matrix.rust.name }}
