@@ -1,4 +1,5 @@
 pub mod authenticate;
+pub mod get_home_status;
 pub mod get_homes_data;
 pub mod get_measure;
 pub mod get_station_data;
@@ -6,6 +7,7 @@ pub mod set_room_thermpoint;
 
 use crate::errors::{ErrorKind, Result};
 use authenticate::{Scope, Token};
+use get_home_status::HomeStatus;
 use get_homes_data::HomesData;
 use get_measure::Measure;
 use get_station_data::StationData;
@@ -16,6 +18,7 @@ use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 
 pub trait Netatmo {
+    fn get_home_status(&self, parameters: &get_home_status::Parameters) -> Result<HomeStatus>;
     fn get_homes_data(&self, parameters: &get_homes_data::Parameters) -> Result<HomesData>;
     fn get_station_data(&self, device_id: &str) -> Result<StationData>;
     fn get_measure(&self, parameters: &get_measure::Parameters) -> Result<Measure>;
@@ -119,6 +122,13 @@ impl Netatmo for AuthenticatedClient {
     fn get_homes_data(&self, parameters: &get_homes_data::Parameters) -> Result<HomesData> {
         get_homes_data::get_homes_data(&self, parameters).map_err(|e| {
             e.context(ErrorKind::ApiCallFailed("get_homes_data".to_string()))
+                .into()
+        })
+    }
+
+    fn get_home_status(&self, parameters: &get_home_status::Parameters) -> Result<HomeStatus> {
+        get_home_status::get_home_status(&self, parameters).map_err(|e| {
+            e.context(ErrorKind::ApiCallFailed("get_home_status".to_string()))
                 .into()
         })
     }

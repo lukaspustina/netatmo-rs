@@ -5,75 +5,75 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
-pub use get_homes_data::GatewayType;
+pub use crate::get_homes_data::GatewayType;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct HomeStatus {
-    status: String,
-    time_server: i64,
-    body: Body,
+pub struct HomeStatus {
+    pub status: String,
+    pub time_server: i64,
+    pub body: Body,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct Body {
-    home: Home,
+pub struct Body {
+    pub home: Home,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct Home {
-    id: String,
-    modules: Vec<Module>,
-    rooms: Vec<Room>,
+pub struct Home {
+    pub id: String,
+    pub modules: Vec<Module>,
+    pub rooms: Vec<Room>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct Module {
-    id: String,
+pub struct Module {
+    pub id: String,
     #[serde(rename = "type")]
-    type_field: String,
-    firmware_revision: i64,
-    rf_strength: Option<i64>,
-    wifi_strength: Option<i64>,
-    reachable: Option<bool>,
-    battery_level: Option<i64>,
-    boiler_valve_comfort_boost: Option<bool>,
-    boiler_status: Option<bool>,
-    anticipating: Option<bool>,
-    bridge: Option<String>,
-    battery_state: Option<String>,
-    status_active: Option<bool>,
-    status_tampered: Option<bool>,
-    test_mode: Option<bool>,
-    hush_mode: Option<bool>,
-    smoke_detected: Option<bool>,
-    detection_chamber_status: Option<String>,
-    battery_alarm_state: Option<String>,
-    battery_percent: Option<i64>,
-    wifi_status: Option<i64>,
-    last_smoke_detected_start_time: Option<i64>,
-    last_smoke_detected_end_time: Option<i64>,
-    last_seen: Option<i64>,
-    last_wifi_connection: Option<i64>,
+    pub type_field: String,
+    pub firmware_revision: i64,
+    pub rf_strength: Option<i64>,
+    pub wifi_strength: Option<i64>,
+    pub reachable: Option<bool>,
+    pub battery_level: Option<i64>,
+    pub boiler_valve_comfort_boost: Option<bool>,
+    pub boiler_status: Option<bool>,
+    pub anticipating: Option<bool>,
+    pub bridge: Option<String>,
+    pub battery_state: Option<String>,
+    pub status_active: Option<bool>,
+    pub status_tampered: Option<bool>,
+    pub test_mode: Option<bool>,
+    pub hush_mode: Option<bool>,
+    pub smoke_detected: Option<bool>,
+    pub detection_chamber_status: Option<String>,
+    pub battery_alarm_state: Option<String>,
+    pub battery_percent: Option<i64>,
+    pub wifi_status: Option<i64>,
+    pub last_smoke_detected_start_time: Option<i64>,
+    pub last_smoke_detected_end_time: Option<i64>,
+    pub last_seen: Option<i64>,
+    pub last_wifi_connection: Option<i64>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct Room {
-    id: String,
-    reachable: bool,
-    therm_measured_temperature: f64,
-    heating_power_request: i64,
-    therm_setpoint_temperature: f64,
-    therm_setpoint_mode: String,
-    therm_setpoint_start_time: i64,
-    therm_setpoint_end_time: i64,
-    anticipating: bool,
-    open_window: bool,
+pub struct Room {
+    pub id: String,
+    pub reachable: bool,
+    pub therm_measured_temperature: f64,
+    pub heating_power_request: i64,
+    pub therm_setpoint_temperature: f64,
+    pub therm_setpoint_mode: String,
+    pub therm_setpoint_start_time: i64,
+    pub therm_setpoint_end_time: i64,
+    pub anticipating: bool,
+    pub open_window: bool,
 }
 
 #[derive(Default)]
 pub struct Parameters<'a> {
     home_id: Option<&'a str>,
-    gateway_types: Option<&'a [GatewayType]>,
+    device_types: Option<&'a [GatewayType]>,
 }
 
 impl<'a> Parameters<'a> {
@@ -87,9 +87,9 @@ impl<'a> Parameters<'a> {
             ..self
         }
     }
-    pub fn gateway_types(self, gateway_types: &'a [GatewayType]) -> Self {
+    pub fn device_types(self, device_types: &'a [GatewayType]) -> Self {
         Parameters {
-            gateway_types: Some(gateway_types),
+            device_types: Some(device_types),
             ..self
         }
     }
@@ -102,14 +102,14 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
         if let Some(home_id) = p.home_id {
             map.insert("home_id", home_id.to_string());
         }
-        if let Some(gateway_types) = p.gateway_types {
-            let gateway_types = gateway_types
+        if let Some(device_types) = p.device_types {
+            let device_types = device_types
                 .iter()
                 .map(|x| x.to_string())
                 .collect::<Vec<_>>()
                 .as_slice()
                 .join(",");
-            map.insert("gateway_types", gateway_types);
+            map.insert("device_types", device_types);
         }
 
         map
@@ -119,7 +119,7 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
 pub(crate) fn get_home_status(
     client: &AuthenticatedClient,
     parameters: &Parameters,
-) -> Result<HomesData> {
+) -> Result<HomeStatus> {
     let params: HashMap<&str, String> = parameters.into();
     let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
     client.call("https://api.netatmo.com/api/homestatus", &mut params)
