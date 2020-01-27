@@ -20,7 +20,7 @@ fn main() {
         .to_string();
 
     let client_credentials = ClientCredentials {
-        client_id: &client_id,
+        client_id:     &client_id,
         client_secret: &client_secret,
     };
     let scopes = vec![Scope::ReadStation];

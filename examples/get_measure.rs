@@ -1,5 +1,10 @@
-use netatmo_rs::get_measure::{Parameters, Scale, Type};
-use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
+use netatmo_rs::{
+    get_measure::{Parameters, Scale, Type},
+    ClientCredentials,
+    Netatmo,
+    NetatmoClient,
+    Scope,
+};
 use std::env;
 
 fn main() {
@@ -25,15 +30,11 @@ fn main() {
         .to_string();
 
     let client_credentials = ClientCredentials {
-        client_id: &client_id,
+        client_id:     &client_id,
         client_secret: &client_secret,
     };
     let scopes = vec![Scope::ReadStation];
-    let m_params = Parameters::new(
-        &device_id,
-        Scale::Max,
-        &[Type::Humidity, Type::Temperature, Type::CO2],
-    );
+    let m_params = Parameters::new(&device_id, Scale::Max, &[Type::Humidity, Type::Temperature, Type::CO2]);
 
     let station_data = NetatmoClient::new(&client_credentials)
         .authenticate(&username, &password, &scopes)

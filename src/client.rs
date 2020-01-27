@@ -30,7 +30,7 @@ pub trait Netatmo {
 
 #[derive(Debug)]
 pub struct ClientCredentials<'a> {
-    pub client_id: &'a str,
+    pub client_id:     &'a str,
     pub client_secret: &'a str,
 }
 
@@ -56,21 +56,13 @@ impl<'a> NetatmoClient {
 #[derive(Debug)]
 pub struct UnauthenticatedClient<'a> {
     client_credentials: &'a ClientCredentials<'a>,
-    http: reqwest::Client,
+    http:               reqwest::Client,
 }
 
 impl<'a> UnauthenticatedClient<'a> {
-    pub fn authenticate(
-        self,
-        username: &'a str,
-        password: &'a str,
-        scopes: &[Scope],
-    ) -> Result<AuthenticatedClient> {
+    pub fn authenticate(self, username: &'a str, password: &'a str, scopes: &[Scope]) -> Result<AuthenticatedClient> {
         authenticate::get_token(&self, username, password, scopes)
-            .map(|token| AuthenticatedClient {
-                token,
-                http: self.http,
-            })
+            .map(|token| AuthenticatedClient { token, http: self.http })
             .map_err(|e| e.context(ErrorKind::AuthenticationFailed).into())
     }
 
@@ -84,13 +76,11 @@ impl<'a> UnauthenticatedClient<'a> {
 
 pub struct AuthenticatedClient {
     token: Token,
-    http: reqwest::Client,
+    http:  reqwest::Client,
 }
 
 impl AuthenticatedClient {
-    pub fn token(&self) -> &Token {
-        &self.token
-    }
+    pub fn token(&self) -> &Token { &self.token }
 
     pub(crate) fn call<'a, T>(&'a self, url: &str, params: &mut HashMap<&str, &'a str>) -> Result<T>
     where
@@ -111,19 +101,14 @@ where
         .send()
         .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?;
 
-    let body = res
-        .text()
-        .map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    serde_json::from_str::<T>(&body)
-        .map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
+    let body = res.text().map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
+    serde_json::from_str::<T>(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
 
 impl Netatmo for AuthenticatedClient {
     fn get_homes_data(&self, parameters: &get_homes_data::Parameters) -> Result<HomesData> {
-        get_homes_data::get_homes_data(&self, parameters).map_err(|e| {
-            e.context(ErrorKind::ApiCallFailed("get_homes_data".to_string()))
-                .into()
-        })
+        get_homes_data::get_homes_data(&self, parameters)
+            .map_err(|e| e.context(ErrorKind::ApiCallFailed("get_homes_data".to_string())).into())
     }
 
     fn get_home_status(&self, parameters: &get_home_status::Parameters) -> Result<HomeStatus> {
@@ -141,10 +126,8 @@ impl Netatmo for AuthenticatedClient {
     }
 
     fn get_measure(&self, parameters: &get_measure::Parameters) -> Result<Measure> {
-        get_measure::get_measure(&self, parameters).map_err(|e| {
-            e.context(ErrorKind::ApiCallFailed("get_measure".to_string()))
-                .into()
-        })
+        get_measure::get_measure(&self, parameters)
+            .map_err(|e| e.context(ErrorKind::ApiCallFailed("get_measure".to_string())).into())
     }
 
     fn set_room_thermpoint(

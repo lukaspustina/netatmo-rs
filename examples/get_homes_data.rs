@@ -1,5 +1,10 @@
-use netatmo_rs::get_homes_data::{GatewayType, Parameters};
-use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
+use netatmo_rs::{
+    get_homes_data::{GatewayType, Parameters},
+    ClientCredentials,
+    Netatmo,
+    NetatmoClient,
+    Scope,
+};
 use std::env;
 
 fn main() {
@@ -25,7 +30,7 @@ fn main() {
         .to_string();
 
     let client_credentials = ClientCredentials {
-        client_id: &client_id,
+        client_id:     &client_id,
         client_secret: &client_secret,
     };
     let scopes = vec![Scope::ReadThermostat];
