@@ -15,7 +15,7 @@ jobs:
       matrix:
         os:
           - name: ubuntu-latest
-            allow_fail: true
+            allow_fail: false
           - name: macOS-latest
             allow_fail: false
         rust:
@@ -46,14 +46,7 @@ jobs:
 
   audit:
     name: Cargo Audit
-    runs-on: ${{ matrix.os.name }}
-    strategy:
-      matrix:
-        os:
-          # - name: ubuntu-latest
-          - name: macOS-latest
-        rust:
-          - name: stable
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v1
@@ -61,7 +54,7 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ matrix.rust.name }}
+          toolchain: stable
           override: true
 
       - name: Install cargo audit
@@ -71,16 +64,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: audit
-          args: --deny-warnings
+          #  args: --deny-warnings
 
   clippy:
     name: Clippy
-    runs-on: ${{ matrix.os.name }}
-    strategy:
-      matrix:
-        os:
-          # - name: ubuntu-latest
-          - name: macOS-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v1
@@ -144,7 +132,7 @@ jobs:
       matrix:
         os:
           - name: ubuntu-latest
-            allow_fail: true
+            allow_fail: false
           - name: macOS-latest
             allow_fail: false
         rust:
