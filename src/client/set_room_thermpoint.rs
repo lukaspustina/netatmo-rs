@@ -1,10 +1,9 @@
 use crate::client::AuthenticatedClient;
 use crate::errors::Result;
 
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt;
-use std::str::FromStr;
 
 pub struct Parameters<'a> {
     home_id: &'a str,

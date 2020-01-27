@@ -3,7 +3,6 @@ use crate::errors::Result;
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fmt;
 
 pub use crate::get_homes_data::GatewayType;
 
