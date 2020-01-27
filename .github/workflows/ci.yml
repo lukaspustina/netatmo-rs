@@ -14,12 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          # - name: ubuntu-latest
-          #  allow_fail: true
+          - name: ubuntu-latest
+            allow_fail: true
           - name: macOS-latest
             allow_fail: false
         rust:
-          - name: 1.36.0
+          - name: 1.37.0
             allow_fail: false
           - name: stable
             allow_fail: false
@@ -143,12 +143,12 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          # - name: ubuntu-latest
-          #  allow_fail: true
+          - name: ubuntu-latest
+            allow_fail: true
           - name: macOS-latest
             allow_fail: false
         rust:
-          - name: 1.36.0
+          - name: 1.37.0
             allow_fail: false
           - name: stable
             allow_fail: false
