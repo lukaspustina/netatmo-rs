@@ -5,105 +5,105 @@ use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StationData {
-    body: Body,
-    status: String,
-    time_exec: f64,
-    time_server: u64,
+    pub body: Body,
+    pub status: String,
+    pub time_exec: f64,
+    pub time_server: u64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Body {
-    devices: Vec<Device>,
-    user: User,
+    pub devices: Vec<Device>,
+    pub user: User,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Device {
     #[serde(rename = "_id")]
-    id: String,
-    co2_calibrating: bool,
-    date_setup: u64,
-    firmware: u64,
-    last_setup: u64,
-    last_status_store: u64,
-    last_upgrade: Option<u64>,
-    module_name: String,
-    reachable: bool,
-    station_name: String,
+    pub id: String,
+    pub co2_calibrating: bool,
+    pub date_setup: u64,
+    pub firmware: u64,
+    pub last_setup: u64,
+    pub last_status_store: u64,
+    pub last_upgrade: Option<u64>,
+    pub module_name: String,
+    pub reachable: bool,
+    pub station_name: String,
     #[serde(rename = "type")]
-    type_info: String,
-    wifi_status: f64,
-    dashboard_data: DashboardData,
-    data_type: Vec<String>,
-    modules: Vec<Module>,
-    place: Place,
+    pub type_info: String,
+    pub wifi_status: f64,
+    pub dashboard_data: DashboardData,
+    pub data_type: Vec<String>,
+    pub modules: Vec<Module>,
+    pub place: Place,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DashboardData {
     #[serde(rename = "AbsolutePressure")]
-    absolute_pressure: Option<f64>,
+    pub absolute_pressure: Option<f64>,
     #[serde(rename = "CO2")]
-    co2: Option<u64>,
+    pub co2: Option<u64>,
     #[serde(rename = "Humidity")]
-    humidity: Option<u64>,
+    pub humidity: Option<u64>,
     #[serde(rename = "Noise")]
-    noise: Option<u64>,
+    pub noise: Option<u64>,
     #[serde(rename = "Pressure")]
-    pressure: Option<f64>,
+    pub pressure: Option<f64>,
     #[serde(rename = "Temperature")]
-    temperature: Option<f64>,
-    date_max_temp: Option<u64>,
-    date_min_temp: Option<u64>,
-    max_temp: Option<f64>,
-    min_temp: Option<f64>,
-    pressure_trend: Option<String>,
-    temp_trend: Option<String>,
-    time_utc: Option<u64>,
+    pub temperature: Option<f64>,
+    pub date_max_temp: Option<u64>,
+    pub date_min_temp: Option<u64>,
+    pub max_temp: Option<f64>,
+    pub min_temp: Option<f64>,
+    pub pressure_trend: Option<String>,
+    pub temp_trend: Option<String>,
+    pub time_utc: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Module {
     #[serde(rename = "_id")]
-    id: String,
-    battery_percent: u64,
-    battery_vp: u64,
-    dashboard_data: DashboardData,
-    data_type: Vec<String>,
-    firmware: u64,
-    last_message: u64,
-    last_seen: u64,
-    last_setup: u64,
-    module_name: String,
-    reachable: bool,
-    rf_status: u64,
+    pub id: String,
+    pub battery_percent: u64,
+    pub battery_vp: u64,
+    pub dashboard_data: DashboardData,
+    pub data_type: Vec<String>,
+    pub firmware: u64,
+    pub last_message: u64,
+    pub last_seen: u64,
+    pub last_setup: u64,
+    pub module_name: String,
+    pub reachable: bool,
+    pub rf_status: u64,
     #[serde(rename = "type")]
-    type_info: String,
+    pub type_info: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Place {
-    altitude: u64,
-    city: String,
-    country: String,
-    location: Vec<f64>,
-    timezone: String,
+    pub altitude: u64,
+    pub city: String,
+    pub country: String,
+    pub location: Vec<f64>,
+    pub timezone: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
-    administrative: Administrative,
-    mail: String,
+    pub administrative: Administrative,
+    pub mail: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Administrative {
-    feel_like_algo: u64,
-    lang: String,
-    pressureunit: u64,
-    reg_locale: String,
-    unit: u64,
-    windunit: u64,
+    pub feel_like_algo: u64,
+    pub lang: String,
+    pub pressureunit: u64,
+    pub reg_locale: String,
+    pub unit: u64,
+    pub windunit: u64,
 }
 
 pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
