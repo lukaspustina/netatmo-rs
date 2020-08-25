@@ -13,7 +13,6 @@ use get_measure::Measure;
 use get_station_data::StationData;
 
 use failure::Fail;
-use reqwest;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 
