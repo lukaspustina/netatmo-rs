@@ -19,7 +19,7 @@ jobs:
           - name: macOS-latest
             allow_fail: false
         rust:
-          - name: 1.37.0
+          - name: 1.40.0
             allow_fail: false
           - name: stable
             allow_fail: false
@@ -136,7 +136,7 @@ jobs:
           - name: macOS-latest
             allow_fail: false
         rust:
-          - name: 1.37.0
+          - name: 1.40.0
             allow_fail: false
           - name: stable
             allow_fail: false
