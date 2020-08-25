@@ -11,13 +11,13 @@ clean-package:
 	cargo clean -p $$(cargo read-manifest | jq -r .name)
 
 clippy:
-	cargo clippy --all --all-targets --all-features -- -D warnings $$(source ".clippy.args")
+	cargo clippy --all --all-targets --all-features
 
 fmt:
-	cargo +nightly fmt
+	cargo fmt
 
 audit:
-	cargo audit --deny-warnings
+	cargo audit
 
 .PHONY:
 
