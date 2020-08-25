@@ -6,8 +6,8 @@ use std::{collections::HashMap, fmt};
 pub struct Parameters<'a> {
     home_id: &'a str,
     room_id: &'a str,
-    mode:    Mode,
-    temp:    Option<f32>,
+    mode: Mode,
+    temp: Option<f32>,
     endtime: Option<usize>,
 }
 
@@ -88,7 +88,7 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
 
 #[derive(Deserialize, Debug)]
 pub struct Response {
-    pub status:      String,
+    pub status: String,
     pub time_server: usize,
 }
 

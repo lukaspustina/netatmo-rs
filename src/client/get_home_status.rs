@@ -7,9 +7,9 @@ pub use crate::get_homes_data::GatewayType;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HomeStatus {
-    pub status:      String,
+    pub status: String,
     pub time_server: i64,
-    pub body:        Body,
+    pub body: Body,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -19,9 +19,9 @@ pub struct Body {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Home {
-    pub id:      String,
+    pub id: String,
     pub modules: Vec<Module>,
-    pub rooms:   Vec<Room>,
+    pub rooms: Vec<Room>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -70,12 +70,14 @@ pub struct Room {
 
 #[derive(Default)]
 pub struct Parameters<'a> {
-    home_id:      Option<&'a str>,
+    home_id: Option<&'a str>,
     device_types: Option<&'a [GatewayType]>,
 }
 
 impl<'a> Parameters<'a> {
-    pub fn new() -> Self { Parameters::default() }
+    pub fn new() -> Self {
+        Parameters::default()
+    }
 
     pub fn home_id(self, home_id: &'a str) -> Self {
         Parameters {

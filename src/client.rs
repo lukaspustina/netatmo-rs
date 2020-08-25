@@ -30,7 +30,7 @@ pub trait Netatmo {
 
 #[derive(Debug)]
 pub struct ClientCredentials<'a> {
-    pub client_id:     &'a str,
+    pub client_id: &'a str,
     pub client_secret: &'a str,
 }
 
@@ -56,7 +56,7 @@ impl<'a> NetatmoClient {
 #[derive(Debug)]
 pub struct UnauthenticatedClient<'a> {
     client_credentials: &'a ClientCredentials<'a>,
-    http:               reqwest::Client,
+    http: reqwest::Client,
 }
 
 impl<'a> UnauthenticatedClient<'a> {
@@ -76,11 +76,13 @@ impl<'a> UnauthenticatedClient<'a> {
 
 pub struct AuthenticatedClient {
     token: Token,
-    http:  reqwest::Client,
+    http: reqwest::Client,
 }
 
 impl AuthenticatedClient {
-    pub fn token(&self) -> &Token { &self.token }
+    pub fn token(&self) -> &Token {
+        &self.token
+    }
 
     pub(crate) fn call<'a, T>(&'a self, url: &str, params: &mut HashMap<&str, &'a str>) -> Result<T>
     where

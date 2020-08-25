@@ -5,11 +5,11 @@ use std::{collections::HashMap, fmt};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
-    pub access_token:  String,
+    pub access_token: String,
     pub refresh_token: String,
-    pub scope:         Vec<Scope>,
-    pub expires_in:    u64,
-    pub expire_in:     u64,
+    pub scope: Vec<Scope>,
+    pub expires_in: u64,
+    pub expire_in: u64,
 }
 
 #[allow(clippy::implicit_hasher)]

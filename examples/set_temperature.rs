@@ -1,9 +1,6 @@
 use netatmo_rs::{
     set_room_thermpoint::{Mode, Parameters},
-    ClientCredentials,
-    Netatmo,
-    NetatmoClient,
-    Scope,
+    ClientCredentials, Netatmo, NetatmoClient, Scope,
 };
 use std::env;
 
@@ -34,7 +31,7 @@ fn main() {
         .to_string();
 
     let client_credentials = ClientCredentials {
-        client_id:     &client_id,
+        client_id: &client_id,
         client_secret: &client_secret,
     };
     let m_params = Parameters::new(&home_id, &room_id, Mode::Home);

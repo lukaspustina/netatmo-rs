@@ -4,14 +4,14 @@ use serde::{Deserialize, Deserializer, Serialize};
 use std::{collections::HashMap, fmt, str::FromStr};
 
 pub struct Parameters<'a> {
-    device_id:  &'a str,
-    module_id:  &'a str,
-    scale:      Scale,
-    types:      &'a [Type],
+    device_id: &'a str,
+    module_id: &'a str,
+    scale: Scale,
+    types: &'a [Type],
     date_begin: Option<usize>,
-    date_end:   Option<usize>,
-    limit:      Option<bool>,
-    real_time:  Option<bool>,
+    date_end: Option<usize>,
+    limit: Option<bool>,
+    real_time: Option<bool>,
 }
 
 impl<'a> Parameters<'a> {
@@ -147,10 +147,10 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Measure {
-    status:    String,
+    status: String,
     time_exec: f64,
     #[serde(rename = "body", deserialize_with = "de_body_values")]
-    values:    HashMap<usize, Vec<Option<f64>>>,
+    values: HashMap<usize, Vec<Option<f64>>>,
 }
 
 // cf. https://dev.netatmo.com/resources/technical/reference/common/getmeasure

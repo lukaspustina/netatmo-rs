@@ -1,9 +1,6 @@
 use netatmo_rs::{
     get_measure::{Parameters, Scale, Type},
-    ClientCredentials,
-    Netatmo,
-    NetatmoClient,
-    Scope,
+    ClientCredentials, Netatmo, NetatmoClient, Scope,
 };
 use std::env;
 
@@ -30,7 +27,7 @@ fn main() {
         .to_string();
 
     let client_credentials = ClientCredentials {
-        client_id:     &client_id,
+        client_id: &client_id,
         client_secret: &client_secret,
     };
     let scopes = vec![Scope::ReadStation];
