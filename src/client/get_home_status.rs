@@ -118,5 +118,5 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
 pub(crate) fn get_home_status(client: &AuthenticatedClient, parameters: &Parameters) -> Result<HomeStatus> {
     let params: HashMap<&str, String> = parameters.into();
     let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
-    client.call("https://api.netatmo.com/api/homestatus", &mut params)
+    client.call("get_home_status", "https://api.netatmo.com/api/homestatus", &mut params)
 }

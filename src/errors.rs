@@ -1,5 +1,6 @@
-use failure::{Backtrace, Context, Fail};
 use std::fmt;
+
+use failure::{Backtrace, Context, Fail};
 
 /// The error kind for errors that get returned in the crate
 #[derive(Eq, PartialEq, Debug, Fail)]
@@ -12,8 +13,17 @@ pub enum ErrorKind {
     FailedToReadResponse,
     #[fail(display = "failed to authenticate")]
     AuthenticationFailed,
-    #[fail(display = "API call '{}' failed", _0)]
-    ApiCallFailed(String),
+    #[fail(display = "API call '{}' failed with code {} because {}", name, code, msg)]
+    ApiCallFailed {
+        name: &'static str,
+        code: isize,
+        msg: String,
+    },
+    #[fail(
+        display = "API call '{}' failed for unknown reason with status code {}",
+        name, status_code
+    )]
+    UnknownApiCallFailure { name: &'static str, status_code: u16 },
 }
 
 impl Clone for ErrorKind {
@@ -24,7 +34,12 @@ impl Clone for ErrorKind {
             FailedToSendRequest => FailedToSendRequest,
             FailedToReadResponse => FailedToReadResponse,
             AuthenticationFailed => AuthenticationFailed,
-            ApiCallFailed(ref x) => ApiCallFailed(x.clone()),
+            ApiCallFailed { name, code, ref msg } => ApiCallFailed {
+                name,
+                code,
+                msg: msg.clone(),
+            },
+            UnknownApiCallFailure { name, status_code } => UnknownApiCallFailure { name, status_code },
         }
     }
 }

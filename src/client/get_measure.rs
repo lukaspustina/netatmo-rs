@@ -158,7 +158,7 @@ pub fn get_measure(client: &AuthenticatedClient, parameters: &Parameters) -> Res
     let params: HashMap<&str, String> = parameters.into();
     let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
 
-    client.call("https://api.netatmo.com/api/getmeasure", &mut params)
+    client.call("get_measure", "https://api.netatmo.com/api/getmeasure", &mut params)
 }
 
 fn de_body_values<'de, D>(deserializer: D) -> ::std::result::Result<HashMap<usize, Vec<Option<f64>>>, D::Error>

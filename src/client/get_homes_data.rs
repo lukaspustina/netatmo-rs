@@ -186,5 +186,5 @@ impl<'a> From<&'a Parameters<'a>> for HashMap<&str, String> {
 pub(crate) fn get_homes_data(client: &AuthenticatedClient, parameters: &Parameters) -> Result<HomesData> {
     let params: HashMap<&str, String> = parameters.into();
     let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
-    client.call("https://api.netatmo.com/api/homesdata", &mut params)
+    client.call("get_homes_data", "https://api.netatmo.com/api/homesdata", &mut params)
 }

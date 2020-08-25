@@ -97,5 +97,9 @@ pub fn set_room_thermpoint(client: &AuthenticatedClient, parameters: &Parameters
     let params: HashMap<&str, String> = parameters.into();
     let mut params = params.iter().map(|(k, v)| (*k, v.as_ref())).collect();
 
-    client.call("https://api.netatmo.com/api/setroomthermpoint", &mut params)
+    client.call(
+        "set_room_thermpoint",
+        "https://api.netatmo.com/api/setroomthermpoint",
+        &mut params,
+    )
 }

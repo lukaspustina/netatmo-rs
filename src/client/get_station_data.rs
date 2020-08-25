@@ -1,7 +1,8 @@
-use crate::{client::AuthenticatedClient, errors::Result};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+
+use crate::{client::AuthenticatedClient, errors::Result};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StationData {
@@ -110,13 +111,18 @@ pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) ->
     let mut params: HashMap<&str, &str> = HashMap::default();
     params.insert("device_id", device_id);
 
-    client.call("https://api.netatmo.com/api/getstationsdata", &mut params)
+    client.call(
+        "get_station_data",
+        "https://api.netatmo.com/api/getstationsdata",
+        &mut params,
+    )
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use spectral::prelude::*;
+
+    use super::*;
 
     mod get_station_data {
         use super::*;

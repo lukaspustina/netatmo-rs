@@ -89,5 +89,5 @@ pub(crate) fn get_token(
     params.insert("grant_type", "password");
     params.insert("scope", &scopes_str);
 
-    unauthenticated_client.call("https://api.netatmo.com/oauth2/token", &params)
+    unauthenticated_client.call("oauth2/token", "https://api.netatmo.com/oauth2/token", &params)
 }
