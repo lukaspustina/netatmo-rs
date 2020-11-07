@@ -2,6 +2,8 @@ use netatmo_rs::{ClientCredentials, Netatmo, NetatmoClient, Scope};
 use std::env;
 
 fn main() {
+    env_logger::init();
+
     let client_id = env::var_os("NETATMO_CLIENT_ID")
         .expect("Environment variable 'NETATMO_CLIENT_ID' is not set.")
         .to_string_lossy()

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use failure::Fail;
+use log::trace;
 use reqwest::{Response, StatusCode};
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
@@ -108,6 +109,7 @@ where
         .general_err_handler(name, StatusCode::OK)?;
 
     let body = res.text().map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
+    trace!("Sucessful ({:?}) repsone: '{}'", res.status(), body);
     serde_json::from_str::<T>(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
 
