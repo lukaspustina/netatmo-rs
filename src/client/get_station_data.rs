@@ -99,9 +99,10 @@ pub struct User {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Administrative {
+    pub country: Option<String>,
     pub feel_like_algo: u64,
     pub lang: String,
-    pub pressureunit: u64,
+    pub pressureunit: Option<u64>,
     pub reg_locale: String,
     pub unit: u64,
     pub windunit: u64,
