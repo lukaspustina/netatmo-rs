@@ -42,6 +42,7 @@ jobs:
         with:
           toolchain: ${{ matrix.rust.name }}
           command: check
+          args: --all --all-targets --all-features
           continue-on-error: ${{ matrix.os.allow_fail || matrix.rust.allow_fail }}
 
   audit:
@@ -92,8 +93,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          # For lints see /.clippy.args
-          args: -- -D warnings -A renamed_and_removed_lints -A clippy::match_bool -A clippy::get_unwrap -A clippy::new_without_default -A clippy::identity-conversion -A clippy::needless_lifetimes
+          args: --all --all-targets --all-features
 
   rustfmt:
     name: Format
