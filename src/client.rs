@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use failure::Fail;
 use log::trace;
-use reqwest::{Response, StatusCode};
+use reqwest::blocking::{Client, Response};
+use reqwest::StatusCode;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
@@ -45,14 +46,14 @@ impl<'a> NetatmoClient {
     pub fn new(client_credentials: &'a ClientCredentials) -> UnauthenticatedClient<'a> {
         UnauthenticatedClient {
             client_credentials,
-            http: reqwest::Client::new(),
+            http: Client::new(),
         }
     }
 
     pub fn with_token(token: Token) -> AuthenticatedClient {
         AuthenticatedClient {
             token,
-            http: reqwest::Client::new(),
+            http: Client::new(),
         }
     }
 }
@@ -60,7 +61,7 @@ impl<'a> NetatmoClient {
 #[derive(Debug)]
 pub struct UnauthenticatedClient<'a> {
     client_credentials: &'a ClientCredentials<'a>,
-    http: reqwest::Client,
+    http: Client,
 }
 
 impl<'a> UnauthenticatedClient<'a> {
@@ -80,7 +81,7 @@ impl<'a> UnauthenticatedClient<'a> {
 
 pub struct AuthenticatedClient {
     token: Token,
-    http: reqwest::Client,
+    http: Client,
 }
 
 impl AuthenticatedClient {
@@ -97,19 +98,20 @@ impl AuthenticatedClient {
     }
 }
 
-fn api_call<T>(name: &'static str, http: &reqwest::Client, url: &str, params: &HashMap<&str, &str>) -> Result<T>
+fn api_call<T>(name: &'static str, http: &Client, url: &str, params: &HashMap<&str, &str>) -> Result<T>
 where
     T: DeserializeOwned,
 {
-    let mut res = http
+    let res = http
         .post(url)
         .form(&params)
         .send()
         .map_err(|e| e.context(ErrorKind::FailedToSendRequest))?
         .general_err_handler(name, StatusCode::OK)?;
 
+    let status = res.status();
     let body = res.text().map_err(|e| e.context(ErrorKind::FailedToReadResponse))?;
-    trace!("Sucessful ({:?}) repsone: '{}'", res.status(), body);
+    trace!("Sucessful ({:?}) repsone: '{}'", status, body);
     serde_json::from_str::<T>(&body).map_err(|e| e.context(ErrorKind::JsonDeserializationFailed).into())
 }
 
@@ -134,7 +136,7 @@ struct ApiErrorDetails {
 impl GeneralErrHandler for Response {
     type T = Response;
 
-    fn general_err_handler(mut self, name: &'static str, expected_status: StatusCode) -> Result<Self> {
+    fn general_err_handler(self, name: &'static str, expected_status: StatusCode) -> Result<Self> {
         match self.status() {
             code if code == expected_status => Ok(self),
             code @ StatusCode::BAD_REQUEST
