@@ -25,6 +25,7 @@ pub trait Netatmo {
     fn get_home_status(&self, parameters: &get_home_status::Parameters) -> Result<HomeStatus>;
     fn get_homes_data(&self, parameters: &get_homes_data::Parameters) -> Result<HomesData>;
     fn get_station_data(&self, device_id: &str) -> Result<StationData>;
+    fn get_homecoachs_data(&self, device_id: &str) -> Result<StationData>;
     fn get_measure(&self, parameters: &get_measure::Parameters) -> Result<Measure>;
     fn set_room_thermpoint(
         &self,
@@ -180,6 +181,10 @@ impl Netatmo for AuthenticatedClient {
 
     fn get_station_data(&self, device_id: &str) -> Result<StationData> {
         get_station_data::get_station_data(&self, device_id)
+    }
+
+    fn get_homecoachs_data(&self, device_id: &str) -> Result<StationData> {
+        get_station_data::get_homecoachs_data(self, device_id)
     }
 
     fn get_measure(&self, parameters: &get_measure::Parameters) -> Result<Measure> {

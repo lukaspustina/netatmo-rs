@@ -28,7 +28,7 @@ pub struct Device {
     pub last_setup: u64,
     pub last_status_store: u64,
     pub last_upgrade: Option<u64>,
-    pub module_name: String,
+    pub module_name: Option<String>,
     pub reachable: bool,
     pub station_name: String,
     #[serde(rename = "type")]
@@ -36,6 +36,7 @@ pub struct Device {
     pub wifi_status: f64,
     pub dashboard_data: DashboardData,
     pub data_type: Vec<String>,
+    #[serde(default)]
     pub modules: Vec<Module>,
     pub place: Place,
 }
@@ -54,6 +55,7 @@ pub struct DashboardData {
     pub pressure: Option<f64>,
     #[serde(rename = "Temperature")]
     pub temperature: Option<f64>,
+    pub health_idx: Option<u8>,
     pub date_max_temp: Option<u64>,
     pub date_min_temp: Option<u64>,
     pub max_temp: Option<f64>,
@@ -115,6 +117,17 @@ pub(crate) fn get_station_data(client: &AuthenticatedClient, device_id: &str) ->
     client.call(
         "get_station_data",
         "https://api.netatmo.com/api/getstationsdata",
+        &mut params,
+    )
+}
+
+pub(crate) fn get_homecoachs_data(client: &AuthenticatedClient, device_id: &str) -> Result<StationData> {
+    let mut params: HashMap<&str, &str> = HashMap::default();
+    params.insert("device_id", device_id);
+
+    client.call(
+        "get_homecoachs_data",
+        "https://api.netatmo.com/api/gethomecoachsdata",
         &mut params,
     )
 }
@@ -230,6 +243,79 @@ mod test {
             let station_data: ::std::result::Result<StationData, _> = serde_json::from_str(&json);
 
             assert_that(&station_data).is_ok();
+        }
+    }
+
+    mod get_homecoach_data {
+        use super::*;
+
+        #[test]
+        fn parse_response() {
+            let json = r#"{
+  "body": {
+    "devices": [
+      {
+        "_id": "12:34:56:78:90:AB",
+        "co2_calibrating": false,
+        "dashboard_data": {
+          "AbsolutePressure": 1013.3,
+          "CO2": 455,
+          "Humidity": 43,
+          "Noise": 40,
+          "Pressure": 1019.3,
+          "Temperature": 20.3,
+          "health_idx": 1,
+          "time_utc": 1556451224
+        },
+        "data_type": [
+          "Temperature",
+          "CO2",
+          "Humidity",
+          "Noise",
+          "Pressure",
+          "health_idx"
+        ],
+        "date_setup": 1556295333,
+        "firmware": 140,
+        "last_setup": 1556295333,
+        "last_status_store": 1556451233,
+        "last_upgrade": 1556295520,
+        "place": {
+          "altitude": 50,
+          "city": "Alert",
+          "country": "CAN",
+          "location": [
+            82.5057837,
+            -62.5575262
+          ],
+          "timezone": "EDT"
+        },
+        "reachable": true,
+        "station_name": "Home",
+        "type": "NAMain",
+        "wifi_status": 50
+      }
+    ],
+    "user": {
+      "administrative": {
+        "feel_like_algo": 0,
+        "lang": "en-US",
+        "pressureunit": 0,
+        "reg_locale": "en-US",
+        "unit": 0,
+        "windunit": 0
+      },
+      "mail": "lukas at my_domain"
+    }
+  },
+  "status": "ok",
+  "time_exec": 0.13046002388,
+  "time_server": 1556451492
+}"#;
+
+            let homecoachs_data: ::std::result::Result<StationData, _> = serde_json::from_str(json);
+
+            assert_that(&homecoachs_data).is_ok();
         }
     }
 }
